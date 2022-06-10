@@ -243,6 +243,29 @@ public class FlutterBluePlusPlugin implements FlutterPlugin, MethodCallHandler, 
         break;
       }
 
+      case "pair":
+      {
+        String deviceId = (String)call.arguments;
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceId);
+        device.createBond();
+        result.success(null);
+        break;
+      }
+
+      case "removeBond":
+      {
+        String deviceId = (String)call.arguments;
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceId);
+        try {
+          Boolean flag = android.src.main.java.com.boskokg.flutter_blue_plus.ClsUtils.removeBond(device.getClass(),device);
+          result.success(flag);
+        } catch (Exception e) {
+          Log.d(TAG,"remove bond device exception");
+          result.success(false);
+        }
+        break;
+      }
+
       case "startScan":
       {
         ensurePermissionBeforeAction(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? Manifest.permission.BLUETOOTH_SCAN : Manifest.permission.ACCESS_FINE_LOCATION, (grantedScan, permissionScan) -> {

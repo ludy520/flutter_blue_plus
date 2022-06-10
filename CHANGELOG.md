@@ -1,3 +1,6 @@
+## 1.1.4
+* android增加配对和删除配对
+
 ## 1.1.3
 * Read RSSI from a connected BLE device #1 (thanks to sophisticode)
 * Fixed a crash on Android OS 12 (added check for BLUETOOTH_CONNECT permission) (fixed by dspells)

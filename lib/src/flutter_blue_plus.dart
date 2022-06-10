@@ -98,6 +98,15 @@ class FlutterBluePlus {
         .then((p) => p.map((d) => BluetoothDevice.fromProto(d)).toList());
   }
 
+  /// Retrieve a list of known devices
+  Future<List<BluetoothDevice>> get knownDevices {
+    return _channel
+        .invokeMethod('getKnownDevices')
+        .then((buffer) => protos.ConnectedDevicesResponse.fromBuffer(buffer))
+        .then((p) => p.devices)
+        .then((p) => p.map((d) => BluetoothDevice.fromProto(d)).toList());
+  }
+
   /// Retrieve a list of bonded devices (Android only)
   Future<List<BluetoothDevice>> get bondedDevices {
     return _channel

@@ -192,6 +192,18 @@ class BluetoothDevice {
   String toString() {
     return 'BluetoothDevice{id: $id, name: $name, type: $type, isDiscoveringServices: ${_isDiscoveringServices.value}, _services: ${_services.value}';
   }
+
+  /// Send a pairing request to the device.
+  /// Currently only implemented on Android.
+  Future<void> pair() async {
+    return FlutterBluePlus.instance._channel
+        .invokeMethod('pair', id.toString());
+  }
+
+  Future<bool?> removeBond() {
+    return FlutterBluePlus.instance._channel
+        .invokeMethod<bool>('removeBond', id.toString());
+  }
 }
 
 enum BluetoothDeviceType { unknown, classic, le, dual }
