@@ -1,3 +1,6 @@
+## 1.1.5
+* 修复getKnownDevices的ios没有实现
+
 ## 1.1.4
 * android增加配对和删除配对
 

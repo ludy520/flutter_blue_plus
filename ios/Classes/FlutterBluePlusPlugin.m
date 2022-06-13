@@ -112,16 +112,25 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
     NSArray *periphs = [self->_centralManager retrieveConnectedPeripheralsWithServices:@[[CBUUID UUIDWithString:@"1800"]]];
     NSLog(@"getConnectedDevices periphs size: %lu", [periphs count]);
     result([self toFlutterData:[self toConnectedDeviceResponseProto:periphs]]);
-  } else if([@"connect" isEqualToString:call.method]) {
+  }else if ([@"getKnownDevices" isEqualToString:call.method]){
+    NSArray<CBPeripheral*> *periphs = [_centralManager retrievePeripheralsWithIdentifiers:@[]];
+    NSLog(@"getKnownDevices periphs size: %lu", [periphs count]);
+    result([self toFlutterData:[self toConnectedDeviceResponseProto:periphs]]);
+  }else if([@"connect" isEqualToString:call.method]) {
     FlutterStandardTypedData *data = [call arguments];
     ProtosConnectRequest *request = [[ProtosConnectRequest alloc] initWithData:[data data] error:nil];
     NSString *remoteId = [request remoteId];
     @try {
       CBPeripheral *peripheral = [_scannedPeripherals objectForKey:remoteId];
       if(peripheral == nil) {
+
+       peripheral = [self findPeripheral:remoteId];
+       if(peripheral == nil) {
         @throw [FlutterError errorWithCode:@"connect"
-                                   message:@"Peripheral not found"
-                                   details:nil];
+                                 message:@"Peripheral not found"
+                                 details:nil];
+       }
+       [_scannedPeripherals setObject:peripheral forKey:[[peripheral identifier] UUIDString]];
       }
       // TODO: Implement Connect options (#36)
       [_centralManager connectPeripheral:peripheral options:nil];
@@ -273,6 +282,10 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
 
 - (CBPeripheral*)findPeripheral:(NSString*)remoteId {
   NSArray<CBPeripheral*> *peripherals = [_centralManager retrievePeripheralsWithIdentifiers:@[[[NSUUID alloc] initWithUUIDString:remoteId]]];
+ if(peripherals == nil || peripherals.count == 0) {
+     peripherals = [_centralManager retrieveConnectedPeripheralsWithServices:@[[CBUUID UUIDWithString:@"1800"]]];
+     NSLog(@"getKnownDevices periphs size: %lu", [peripherals count]);
+   }
   CBPeripheral *peripheral;
   for(CBPeripheral *p in peripherals) {
     if([[p.identifier UUIDString] isEqualToString:remoteId]) {
