@@ -1,3 +1,6 @@
+## 1.1.6
+* 修复UUID长度问题，适配Android14
+
 ## 1.1.5
 * 修复getKnownDevices的ios没有实现
 
